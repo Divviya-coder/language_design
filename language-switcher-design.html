@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aram IAS Academy – Language Switcher Options</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f8; }
+
+    /* ── SIDEBAR TOC ── */
+    .toc {
+      position: fixed;
+      top: 0; left: 0;
+      width: 220px;
+      height: 100vh;
+      background: #1d2b53;
+      padding: 24px 16px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    .toc h2 { color: #ffcc00; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+    .toc a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+      transition: all 0.2s;
+    }
+    .toc a:hover, .toc a.active { background: rgba(255,204,0,0.15); color: #ffcc00; }
+    .toc a .num {
+      width: 22px; height: 22px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
+    }
+    .toc a.active .num { background: #ffcc00; color: #1d2b53; }
+
+    /* ── MAIN WRAPPER ── */
+    .main { margin-left: 220px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: linear-gradient(135deg, #1d2b53, #2e4a8e);
+      padding: 48px 60px;
+      color: #fff;
+    }
+    .page-header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .page-header p { color: #c5cde8; font-size: 1rem; }
+    .page-header .tag {
+      display: inline-block;
+      background: #ffcc00;
+      color: #1d2b53;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── OPTION SECTION ── */
+    .option-section { padding: 0 0 60px; }
+    .option-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 28px 60px 20px;
+      background: #fff;
+      border-bottom: 1px solid #e8eaf0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .option-num {
+      width: 42px; height: 42px;
+      background: #1d2b53;
+      color: #ffcc00;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .option-header-text h2 { font-size: 1.15rem; font-weight: 700; color: #1d2b53; }
+    .option-header-text p { font-size: 0.82rem; color: #666; margin-top: 2px; }
+    .badge-rec {
+      margin-left: auto;
+      background: #e6f9ef;
+      color: #1a8a4a;
+      border: 1px solid #a8e6c0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .demo-area { padding: 36px 60px; }
+    .demo-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 16px;
+    }
+
+    /* ── SHARED BANNER ── */
+    .banner {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      background: linear-gradient(135deg, #1d2b53 0%, #2e4a8e 60%, #3a5fbf 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(29,43,83,0.25);
+    }
+    .banner::before {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      top: -100px; right: -80px;
+    }
+    .banner-inner {
+      position: relative; z-index: 2;
+      width: 88%; max-width: 900px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 30px;
+    }
+    .banner-text { flex: 1; }
+    .b-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(255,204,0,0.15);
+      border: 1px solid rgba(255,204,0,0.4);
+      border-radius: 20px; padding: 4px 12px;
+      margin-bottom: 12px;
+      font-size: 0.74rem; font-weight: 600; color: #ffcc00;
+    }
+    .b-badge .dot { width: 6px; height: 6px; background: #ffcc00; border-radius: 50%; }
+    .b-heading { font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 10px; }
+    .b-heading .hl { color: #ffcc00; }
+    .b-sub { font-size: 0.9rem; color: #c5cde8; line-height: 1.6; margin-bottom: 22px; max-width: 380px; }
+    .b-btn {
+      background: #ffcc00; color: #1d2b53;
+      padding: 11px 24px; border-radius: 8px;
+      font-weight: 700; font-size: 0.88rem;
+      text-decoration: none; display: inline-block;
+    }
+    .img-placeholder {
+      width: 200px; height: 150px;
+      border-radius: 12px;
+      border: 3px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.06);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px; color: rgba(255,255,255,0.3);
+      font-size: 0.75rem; flex-shrink: 0;
+    }
+
+    /* ── NAVBAR SHARED ── */
+    .navbar {
+      background: #1d2b53;
+      padding: 14px 28px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      border-radius: 12px 12px 0 0;
+    }
+    .nav-logo { font-size: 1.1rem; font-weight: 700; color: #ffcc00; }
+    .nav-logo span { color: #fff; }
+    .nav-links { display: flex; gap: 20px; color: rgba(255,255,255,0.75); font-size: 0.85rem; font-weight: 500; }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      height: 4px;
+      background: linear-gradient(90deg, #ffcc00, #1d2b53);
+      margin: 0 60px;
+      border-radius: 2px;
+    }
+
+    /* ════════════════════════════════
+       OPTION 1 – Dropdown
+    ════════════════════════════════ */
+    .dd-wrapper { position: relative; display: inline-block; }
+    .dd-trigger {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 8px; padding: 7px 14px;
+      color: #fff; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: border-color 0.2s;
+      user-select: none;
+    }
+    .dd-trigger:hover { border-color: #ffcc00; }
+    .dd-trigger .globe { font-size: 1rem; }
+    .dd-trigger .arrow { font-size: 0.65rem; margin-left: 4px; transition: transform 0.2s; }
+    .dd-trigger.open .arrow { transform: rotate(180deg); }
+    .dd-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px); right: 0;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+      overflow: hidden;
+      min-width: 160px;
+      z-index: 200;
+    }
+    .dd-menu.show { display: block; }
+    .dd-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px;
+      font-size: 0.85rem; font-weight: 600;
+      color: #333; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .dd-item:hover { background: #f0f2f8; }
+    .dd-item.selected { background: #fff8e1; color: #1d2b53; }
+    .dd-item .flag { font-size: 1.1rem; }
+    .dd-item .check { margin-left: auto; color: #ffcc00; font-weight: 800; }
+
+    /* ════════════════════════════════
+       OPTION 2 – Flag Icons
+    ════════════════════════════════ */
+    .flag-group { display: flex; align-items: center; gap: 6px; }
+    .flag-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 2.5px solid transparent;
+      cursor: pointer;
+      font-size: 1.3rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.08);
+    }
+    .flag-icon:hover { background: rgba(255,255,255,0.15); }
+    .flag-icon.active { border-color: #ffcc00; background: rgba(255,204,0,0.15); }
+    .flag-sep { color: rgba(255,255,255,0.25); font-size: 1rem; }
+
+    /* ════════════════════════════════
+       OPTION 3 – Globe Icon + Modal
+    ════════════════════════════════ */
+    .globe-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+    .globe-btn:hover { border-color: #ffcc00; background: rgba(255,204,0,0.15); }
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 36px;
+      width: 420px; max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-box h3 { font-size: 1.2rem; font-weight: 800; color: #1d2b53; margin-bottom: 6px; }
+    .modal-box p { font-size: 0.82rem; color: #888; margin-bottom: 24px; }
+    .modal-cards { display: flex; gap: 14px; }
+    .modal-card {
+      flex: 1; border: 2.5px solid #e8eaf0;
+      border-radius: 14px; padding: 20px 14px;
+      text-align: center; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-card:hover { border-color: #1d2b53; background: #f7f8ff; }
+    .modal-card.selected { border-color: #ffcc00; background: #fffbea; }
+    .modal-card .mflag { font-size: 2.2rem; margin-bottom: 8px; }
+    .modal-card .mlang { font-size: 0.9rem; font-weight: 700; color: #1d2b53; }
+    .modal-card .msub { font-size: 0.75rem; color: #888; margin-top: 3px; }
+    .modal-btn {
+      margin-top: 24px; width: 100%;
+      background: #1d2b53; color: #ffcc00;
+      border: none; border-radius: 10px;
+      padding: 13px; font-size: 0.9rem;
+      font-weight: 700; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .modal-btn:hover { background: #2e4a8e; }
+    .modal-close {
+      float: right; background: none; border: none;
+      font-size: 1.2rem; cursor: pointer; color: #999;
+      margin-top: -6px;
+    }
+
+    /* ════════════════════════════════
+       OPTION 4 – Inline Text Link
+    ════════════════════════════════ */
+    .inline-lang { display: flex; align-items: center; gap: 0; }
+    .inline-lang .il-btn {
+      padding: 6px 14px;
+      font-size: 0.85rem; font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer; transition: color 0.2s;
+      text-decoration: none;
+    }
+    .inline-lang .il-btn.active { color: #ffcc00; text-decoration: underline; text-underline-offset: 3px; }
+    .inline-lang .il-btn:hover { color: #fff; }
+    .inline-lang .il-sep { color: rgba(255,255,255,0.25); font-size: 0.85rem; }
+
+    /* ════════════════════════════════
+       OPTION 5 – Floating Bottom-Right Button
+    ════════════════════════════════ */
+    .fab-lang {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      z-index: 400;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    }
+    .fab-main {
+      display: flex; align-items: center; gap: 10px;
+      background: #1d2b53;
+      color: #fff; font-size: 0.85rem; font-weight: 700;
+      padding: 13px 20px; border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(29,43,83,0.4);
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .fab-main:hover { background: #2e4a8e; transform: translateY(-2px); }
+    .fab-main .fab-icon { font-size: 1.1rem; }
+    .fab-options {
+      display: none; flex-direction: column; gap: 8px; align-items: flex-end;
+    }
+    .fab-options.show { display: flex; }
+    .fab-opt {
+      display: flex; align-items: center; gap: 8px;
+      background: #fff; border-radius: 40px;
+      padding: 10px 18px; cursor: pointer;
+      font-size: 0.82rem; font-weight: 700; color: #1d2b53;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      transition: all 0.2s;
+    }
+    .fab-opt:hover { background: #fffbea; }
+    .fab-opt.active { background: #ffcc00; }
+
+    /* ════════════════════════════════
+       OPTION 6 – First-Visit Prompt
+    ════════════════════════════════ */
+    .first-visit-overlay {
+      position: relative;
+      width: 100%;
+      min-height: 380px;
+      background: linear-gradient(135deg, #1d2b53 0%, #2e4a8e 100%);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .first-visit-overlay::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1;
+    }
+    .fv-box {
+      position: relative; z-index: 2;
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px;
+      padding: 40px 48px;
+      text-align: center;
+      width: 90%; max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .fv-box .fv-icon { font-size: 2.4rem; margin-bottom: 10px; }
+    .fv-box h2 { font-size: 1.3rem; font-weight: 800; color: #1d2b53; margin-bottom: 4px; }
+    .fv-box .fv-sub { font-size: 0.82rem; color: #888; margin-bottom: 28px; }
+    .fv-cards { display: flex; gap: 16px; justify-content: center; margin-bottom: 20px; }
+    .fv-card {
+      flex: 1; max-width: 160px;
+      border: 2.5px solid #e8eaf0;
+      border-radius: 14px; padding: 20px 12px;
+      cursor: pointer; transition: all 0.2s;
+      text-align: center;
+    }
+    .fv-card:hover { border-color: #1d2b53; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(29,43,83,0.12); }
+    .fv-card.selected { border-color: #ffcc00; background: #fffbea; }
+    .fv-card .fv-flag { font-size: 2rem; margin-bottom: 8px; }
+    .fv-card .fv-lang { font-size: 0.95rem; font-weight: 700; color: #1d2b53; }
+    .fv-card .fv-native { font-size: 0.78rem; color: #888; margin-top: 2px; }
+    .fv-note { font-size: 0.74rem; color: #bbb; margin-bottom: 20px; }
+    .fv-continue {
+      background: #1d2b53; color: #ffcc00;
+      border: none; border-radius: 10px;
+      padding: 13px 32px; font-size: 0.9rem;
+      font-weight: 700; cursor: pointer; width: 100%;
+      transition: background 0.2s;
+    }
+    .fv-continue:hover { background: #2e4a8e; }
+
+    /* ── hint box ── */
+    .hint-box {
+      background: #fff;
+      border-left: 4px solid #ffcc00;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 20px;
+      font-size: 0.82rem;
+      color: #555;
+      margin-top: 20px;
+    }
+    .hint-box strong { color: #1d2b53; }
+
+    /* ── selected state indicator ── */
+    .state-indicator {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #e6f9ef; border: 1px solid #a8e6c0;
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 0.78rem; font-weight: 600; color: #1a8a4a;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="toc">
+  <h2>Language Options</h2>
+  <a href="#opt1" class="active"><span class="num active">1</span> Dropdown Menu</a>
+  <a href="#opt2"><span class="num">2</span> Flag Icons</a>
+  <a href="#opt3"><span class="num">3</span> Globe + Modal</a>
+  <a href="#opt4"><span class="num">4</span> Inline Text Link</a>
+  <a href="#opt5"><span class="num">5</span> Floating Button</a>
+  <a href="#opt6"><span class="num">6</span> First-Visit Prompt</a>
+</nav>
+
+<div class="main">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="tag">UI Design Reference</div>
+    <h1>Language Switcher Options</h1>
+    <p>6 different ways to let users switch between English and Hindi on the Aram IAS Academy website. Click each demo to interact with it.</p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       OPTION 1 — DROPDOWN MENU
+  ══════════════════════════════════════ -->
+  <div class="option-section" id="opt1">
+    <div class="option-header">
+      <div class="option-num">1</div>
+      <div class="option-header-text">
+        <h2>Dropdown Menu</h2>
+        <p>A "🌐 English ▾" button in the navbar that opens a dropdown with language choices.</p>
+      </div>
+      <span class="badge-rec">⭐ Recommended</span>
+    </div>
+    <div class="demo-area">
+      <div class="demo-label">Live Demo — Click the dropdown</div>
+
+      <div class="navbar" style="border-radius:12px 12px 0 0;">
+        <div class="nav-logo">ARAM <span>IAS Academy</span></div>
+        <div style="display:flex; align-items:center; gap:24px;">
+          <div class="nav-links"><span>Home</span><span>Courses</span><span>Current Affairs</span></div>
+          <div class="dd-wrapper">
+            <div class="dd-trigger" id="dd1-trigger" onclick="toggleDD()">
+              <span class="globe">🌐</span>
+              <span id="dd1-label">English</span>
+              <span class="arrow">▼</span>
+            </div>
+            <div class="dd-menu" id="dd1-menu">
+              <div class="dd-item selected" onclick="selectDD('English','🇬🇧',this)">
+                <span class="flag">🇬🇧</span> English <span class="check">✓</span>
+              </div>
+              <div class="dd-item" onclick="selectDD('हिंदी','🇮🇳',this)">
+                <span class="flag">🇮🇳</span> हिंदी
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner" style="border-radius:0 0 16px 16px; height:300px;">
+        <div class="banner-inner">
+          <div class="banner-text">
+            <div class="b-badge"><span class="dot"></span><span id="dd1-badge">English Mode</span></div>
+            <h1 class="b-heading" id="dd1-heading">Your Path to <span class="hl">UPSC Success</span><br/>Starts Here</h1>
+            <p class="b-sub" id="dd1-sub">Join Aram IAS Academy — trusted by thousands of aspirants for UPSC &amp; TNPSC coaching.</p>
+            <a href="#" class="b-btn" id="dd1-btn">Explore Courses ›</a>
+          </div>
+          <div class="img-placeholder">
+            <svg width="44" height="44" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10M12 17v4"/></svg>
+            Banner Image
+          </div>
+        </div>
+      </div>
+
+      <div class="hint-box">
+        <strong>Best for:</strong> Clean, standard pattern. Easily scalable — add Tamil or other languages later without redesigning.<br/>
+        <strong>Placement:</strong> Top-right of navbar, next to the login/enroll button.
+      </div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       OPTION 2 — FLAG ICONS
+  ══════════════════════════════════════ -->
+  <div class="option-section" id="opt2">
+    <div class="option-header">
+      <div class="option-num">2</div>
+      <div class="option-header-text">
+        <h2>Flag Icons</h2>
+        <p>Clickable flag emojis in the navbar — very visual, minimal space, no text needed.</p>
+      </div>
+    </div>
+    <div class="demo-area">
+      <div class="demo-label">Live Demo — Click a flag</div>
+
+      <div class="navbar" style="border-radius:12px 12px 0 0;">
+        <div class="nav-logo">ARAM <span>IAS Academy</span></div>
+        <div style="display:flex; align-items:center; gap:24px;">
+          <div class="nav-links"><span>Home</span><span>Courses</span><span>Current Affairs</span></div>
+          <div class="flag-group">
+            <div class="flag-icon active" id="flag-en" onclick="selectFlag('en')" title="English">🇬🇧</div>
+            <span class="flag-sep">|</span>
+            <div class="flag-icon" id="flag-hi" onclick="selectFlag('hi')" title="हिंदी">🇮🇳</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner" style="border-radius:0 0 16px 16px; height:300px;">
+        <div class="banner-inner">
+          <div class="banner-text">
+            <div class="b-badge"><span class="dot"></span><span id="flag-badge">English Mode</span></div>
+            <h1 class="b-heading" id="flag-heading">Your Path to <span class="hl">UPSC Success</span><br/>Starts Here</h1>
+            <p class="b-sub" id="flag-sub">Join Aram IAS Academy — trusted by thousands of aspirants for UPSC &amp; TNPSC coaching.</p>
+            <a href="#" class="b-btn" id="flag-btn">Explore Courses ›</a>
+          </div>
+          <div class="img-placeholder">
+            <svg width="44" height="44" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10M12 17v4"/></svg>
+            Banner Image
+          </div>
+        </div>
+      </div>
+
+      <div class="hint-box">
+        <strong>Best for:</strong> Compact navbars where every pixel counts. Instantly recognisable.<br/>
+        <strong>Caution:</strong> Some users may not immediately understand that flags = language switch. Add a tooltip or "Language" label nearby.
+      </div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       OPTION 3 — GLOBE ICON + MODAL
+  ══════════════════════════════════════ -->
+  <div class="option-section" id="opt3">
+    <div class="option-header">
+      <div class="option-num">3</div>
+      <div class="option-header-text">
+        <h2>Globe Icon + Modal Popup</h2>
+        <p>A 🌐 globe icon opens a centered modal with language cards. Used by Coursera, Apple, Google.</p>
+      </div>
+    </div>
+    <div class="demo-area">
+      <div class="demo-label">Live Demo — Click the globe 🌐 in navbar</div>
+
+      <div class="navbar" style="border-radius:12px 12px 0 0;">
+        <div class="nav-logo">ARAM <span>IAS Academy</span></div>
+        <div style="display:flex; align-items:center; gap:24px;">
+          <div class="nav-links"><span>Home</span><span>Courses</span><span>Current Affairs</span></div>
+          <div class="globe-btn" onclick="openModal()" title="Choose Language">🌐</div>
+        </div>
+      </div>
+
+      <div class="banner" style="border-radius:0 0 16px 16px; height:300px;">
+        <div class="banner-inner">
+          <div class="banner-text">
+            <div class="b-badge"><span class="dot"></span><span id="modal-badge">English Mode</span></div>
+            <h1 class="b-heading" id="modal-heading">Your Path to <span class="hl">UPSC Success</span><br/>Starts Here</h1>
+            <p class="b-sub" id="modal-sub">Join Aram IAS Academy — trusted by thousands of aspirants for UPSC &amp; TNPSC coaching.</p>
+            <a href="#" class="b-btn" id="modal-btn">Explore Courses ›</a>
+          </div>
+          <div class="img-placeholder">
+            <svg width="44" height="44" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10M12 17v4"/></svg>
+            Banner Image
+          </div>
+        </div>
+      </div>
+
+      <div class="hint-box">
+        <strong>Best for:</strong> Premium feel. Very clear UI — user sees both options side by side and confirms their choice.<br/>
+        <strong>Scalable:</strong> Modal layout can handle 4+ languages easily.
+      </div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       OPTION 4 — INLINE TEXT LINK
+  ══════════════════════════════════════ -->
+  <div class="option-section" id="opt4">
+    <div class="option-header">
+      <div class="option-num">4</div>
+      <div class="option-header-text">
+        <h2>Inline Text Link</h2>
+        <p>Simple <code>EN | हिंदी</code> text in the navbar — minimal, no UI overhead, traditional pattern.</p>
+      </div>
+    </div>
+    <div class="demo-area">
+      <div class="demo-label">Live Demo — Click EN or हिंदी</div>
+
+      <div class="navbar" style="border-radius:12px 12px 0 0;">
+        <div class="nav-logo">ARAM <span>IAS Academy</span></div>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div class="nav-links"><span>Home</span><span>Courses</span><span>Current Affairs</span></div>
+          <div class="inline-lang">
+            <span class="il-btn active" id="il-en" onclick="selectInline('en')">EN</span>
+            <span class="il-sep">|</span>
+            <span class="il-btn" id="il-hi" onclick="selectInline('hi')">हिंदी</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner" style="border-radius:0 0 16px 16px; height:300px;">
+        <div class="banner-inner">
+          <div class="banner-text">
+            <div class="b-badge"><span class="dot"></span><span id="il-badge">English Mode</span></div>
+            <h1 class="b-heading" id="il-heading">Your Path to <span class="hl">UPSC Success</span><br/>Starts Here</h1>
+            <p class="b-sub" id="il-sub">Join Aram IAS Academy — trusted by thousands of aspirants for UPSC &amp; TNPSC coaching.</p>
+            <a href="#" class="b-btn" id="il-btn">Explore Courses ›</a>
+          </div>
+          <div class="img-placeholder">
+            <svg width="44" height="44" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10M12 17v4"/></svg>
+            Banner Image
+          </div>
+        </div>
+      </div>
+
+      <div class="hint-box">
+        <strong>Best for:</strong> Ultra-minimal design, fastest to implement.<br/>
+        <strong>Caution:</strong> Less visually prominent — users may miss it. Consider adding an underline animation or subtle highlight on hover.
+      </div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       OPTION 5 — FLOATING BOTTOM-RIGHT BUTTON
+  ══════════════════════════════════════ -->
+  <div class="option-section" id="opt5">
+    <div class="option-header">
+      <div class="option-num">5</div>
+      <div class="option-header-text">
+        <h2>Floating Bottom-Right Button (FAB)</h2>
+        <p>A sticky floating button like your existing <code>Cabutton</code> — always visible while scrolling.</p>
+      </div>
+    </div>
+    <div class="demo-area">
+      <div class="demo-label">Live Demo — See the floating button at bottom-right of screen. Click it!</div>
+
+      <div class="navbar" style="border-radius:12px;">
+        <div class="nav-logo">ARAM <span>IAS Academy</span></div>
+        <div class="nav-links"><span>Home</span><span>Courses</span><span>Current Affairs</span></div>
+      </div>
+
+      <div class="banner" style="margin-top:16px; height:300px;">
+        <div class="banner-inner">
+          <div class="banner-text">
+            <div class="b-badge"><span class="dot"></span><span id="fab-badge">English Mode</span></div>
+            <h1 class="b-heading" id="fab-heading">Your Path to <span class="hl">UPSC Success</span><br/>Starts Here</h1>
+            <p class="b-sub" id="fab-sub">Join Aram IAS Academy — trusted by thousands of aspirants for UPSC &amp; TNPSC coaching.</p>
+            <a href="#" class="b-btn" id="fab-cta">Explore Courses ›</a>
+          </div>
+          <div class="img-placeholder">
+            <svg width="44" height="44" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10M12 17v4"/></svg>
+            Banner Image
+          </div>
+        </div>
+      </div>
+
+      <div class="hint-box">
+        <strong>Best for:</strong> Users who discover the language need after scrolling. Pairs perfectly with your existing Cabutton — place them side by side.<br/>
+        <strong>Note:</strong> Can feel cluttered if too many floating buttons exist on the page.
+      </div>
+    </div>
+    <div class="section-divider"></div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       OPTION 6 — FIRST-VISIT LANGUAGE PROMPT
+  ══════════════════════════════════════ -->
+  <div class="option-section" id="opt6">
+    <div class="option-header">
+      <div class="option-num">6</div>
+      <div class="option-header-text">
+        <h2>First-Visit Language Prompt</h2>
+        <p>Full overlay on the first visit asking the user to pick a language. Saves to localStorage — never asks again.</p>
+      </div>
+    </div>
+    <div class="demo-area">
+      <div class="demo-label">Demo — Select a language and click Continue</div>
+
+      <div class="first-visit-overlay">
+        <div class="fv-box">
+          <div class="fv-icon">🌐</div>
+          <h2>Welcome to Aram IAS Academy</h2>
+          <p class="fv-sub">Please choose your preferred language to continue.<br/>आगे बढ़ने के लिए अपनी भाषा चुनें।</p>
+          <div class="fv-cards">
+            <div class="fv-card selected" id="fv-en" onclick="selectFV('en')">
+              <div class="fv-flag">🇬🇧</div>
+              <div class="fv-lang">English</div>
+              <div class="fv-native">English</div>
+            </div>
+            <div class="fv-card" id="fv-hi" onclick="selectFV('hi')">
+              <div class="fv-flag">🇮🇳</div>
+              <div class="fv-lang">हिंदी</div>
+              <div class="fv-native">Hindi</div>
+            </div>
+          </div>
+          <p class="fv-note">Your choice will be saved. You can change it anytime from the navbar.</p>
+          <button class="fv-continue" onclick="confirmFV()">Continue →</button>
+        </div>
+      </div>
+
+      <div class="hint-box" style="margin-top:20px;">
+        <strong>Best for:</strong> Maximum personalisation — user never has to think about it again. Used by large education platforms (Duolingo, Khan Academy).<br/>
+        <strong>Implementation:</strong> Show on first load if <code>localStorage.getItem('lang')</code> is null. Store choice and never show again.<br/>
+        <strong>Pair with:</strong> Any of the above options in the navbar so users can change their choice later.
+      </div>
+      <div id="fv-confirm-msg" style="display:none;" class="state-indicator">✅ Language saved! Redirecting to site…</div>
+    </div>
+  </div>
+
+</div><!-- end .main -->
+
+
+<!-- ══ MODAL (Option 3) ══ -->
+<div class="modal-overlay" id="langModal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>🌐 Choose Your Language</h3>
+    <p>Select the language you'd like to use on this site.</p>
+    <div class="modal-cards">
+      <div class="modal-card selected" id="mc-en" onclick="selectModal('en')">
+        <div class="mflag">🇬🇧</div>
+        <div class="mlang">English</div>
+        <div class="msub">English</div>
+      </div>
+      <div class="modal-card" id="mc-hi" onclick="selectModal('hi')">
+        <div class="mflag">🇮🇳</div>
+        <div class="mlang">हिंदी</div>
+        <div class="msub">Hindi</div>
+      </div>
+    </div>
+    <button class="modal-btn" onclick="applyModal()">Apply Language</button>
+  </div>
+</div>
+
+<!-- ══ FAB (Option 5) ══ -->
+<div class="fab-lang">
+  <div class="fab-options" id="fab-opts">
+    <div class="fab-opt active" id="fab-opt-en" onclick="selectFAB('en')">🇬🇧 English</div>
+    <div class="fab-opt" id="fab-opt-hi" onclick="selectFAB('hi')">🇮🇳 हिंदी</div>
+  </div>
+  <div class="fab-main" onclick="toggleFAB()">
+    <span class="fab-icon">🌐</span>
+    <span id="fab-label">Language</span>
+    <span style="font-size:0.65rem;">▲</span>
+  </div>
+</div>
+
+
+<script>
+  const T = {
+    en: {
+      badge: 'English Mode', heading: 'Your Path to <span class="hl">UPSC Success</span><br/>Starts Here',
+      sub: 'Join Aram IAS Academy — trusted by thousands of aspirants for UPSC & TNPSC coaching.',
+      btn: 'Explore Courses ›'
+    },
+    hi: {
+      badge: 'हिंदी मोड सक्रिय', heading: '<span class="hl">UPSC सफलता</span> की<br/>राह यहीं से शुरू होती है',
+      sub: 'अरम IAS अकादमी से जुड़ें — UPSC, TNPSC कोचिंग के लिए हजारों अभ्यर्थियों का भरोसा।',
+      btn: 'कोर्स देखें ›'
+    }
+  };
+
+  function applyLang(lang, ids) {
+    ids.forEach(id => {
+      const [badge, heading, sub, btn] = id;
+      document.getElementById(badge).textContent = T[lang].badge;
+      document.getElementById(heading).innerHTML = T[lang].heading;
+      document.getElementById(sub).textContent = T[lang].sub;
+      document.getElementById(btn).textContent = T[lang].btn;
+    });
+  }
+
+  // Option 1 – Dropdown
+  function toggleDD() {
+    const t = document.getElementById('dd1-trigger');
+    const m = document.getElementById('dd1-menu');
+    t.classList.toggle('open'); m.classList.toggle('show');
+  }
+  function selectDD(label, flag, el) {
+    document.getElementById('dd1-label').textContent = label;
+    document.querySelectorAll('#dd1-menu .dd-item').forEach(i => { i.classList.remove('selected'); i.querySelector('.check') && i.querySelector('.check').remove(); });
+    el.classList.add('selected');
+    const chk = document.createElement('span'); chk.className = 'check'; chk.textContent = '✓';
+    el.appendChild(chk);
+    const lang = label === 'English' ? 'en' : 'hi';
+    applyLang(lang, [['dd1-badge','dd1-heading','dd1-sub','dd1-btn']]);
+    toggleDD();
+  }
+
+  // Option 2 – Flags
+  function selectFlag(lang) {
+    document.getElementById('flag-en').classList.toggle('active', lang === 'en');
+    document.getElementById('flag-hi').classList.toggle('active', lang === 'hi');
+    applyLang(lang, [['flag-badge','flag-heading','flag-sub','flag-btn']]);
+  }
+
+  // Option 3 – Modal
+  let modalLang = 'en';
+  function openModal() { document.getElementById('langModal').classList.add('show'); }
+  function closeModal(e) {
+    if (!e || e.target === document.getElementById('langModal')) document.getElementById('langModal').classList.remove('show');
+  }
+  function selectModal(lang) {
+    modalLang = lang;
+    document.getElementById('mc-en').classList.toggle('selected', lang === 'en');
+    document.getElementById('mc-hi').classList.toggle('selected', lang === 'hi');
+  }
+  function applyModal() {
+    applyLang(modalLang, [['modal-badge','modal-heading','modal-sub','modal-btn']]);
+    document.getElementById('langModal').classList.remove('show');
+  }
+
+  // Option 4 – Inline
+  function selectInline(lang) {
+    document.getElementById('il-en').classList.toggle('active', lang === 'en');
+    document.getElementById('il-hi').classList.toggle('active', lang === 'hi');
+    applyLang(lang, [['il-badge','il-heading','il-sub','il-btn']]);
+  }
+
+  // Option 5 – FAB
+  function toggleFAB() { document.getElementById('fab-opts').classList.toggle('show'); }
+  function selectFAB(lang) {
+    document.getElementById('fab-opt-en').classList.toggle('active', lang === 'en');
+    document.getElementById('fab-opt-hi').classList.toggle('active', lang === 'hi');
+    document.getElementById('fab-label').textContent = lang === 'en' ? 'English' : 'हिंदी';
+    applyLang(lang, [['fab-badge','fab-heading','fab-sub','fab-cta']]);
+    toggleFAB();
+  }
+
+  // Option 6 – First Visit
+  let fvLang = 'en';
+  function selectFV(lang) {
+    fvLang = lang;
+    document.getElementById('fv-en').classList.toggle('selected', lang === 'en');
+    document.getElementById('fv-hi').classList.toggle('selected', lang === 'hi');
+  }
+  function confirmFV() {
+    const msg = document.getElementById('fv-confirm-msg');
+    msg.style.display = 'inline-flex';
+    msg.textContent = fvLang === 'en' ? '✅ English saved! Redirecting to site…' : '✅ हिंदी चुनी गई! साइट पर जा रहे हैं…';
+  }
+
+  // Sidebar active highlight on scroll
+  const sections = ['opt1','opt2','opt3','opt4','opt5','opt6'];
+  window.addEventListener('scroll', () => {
+    let current = 'opt1';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 80) current = id;
+    });
+    document.querySelectorAll('.toc a').forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      a.querySelector('.num').classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
